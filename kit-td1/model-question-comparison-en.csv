@@ -1,1 +1,101 @@
 case_id,model_id,trace_file,cell_id,nature,status,value_cents,reference_cents,explanation
+C01,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C01,real,correct,792800,792800,Correct on attempt 1.
+C02,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C02,real,correct,590320,590320,Correct on attempt 1.
+C03,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C03,real,correct,936350,936350,Correct on attempt 1.
+C04,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C04,real,correct,2826250,2826250,Correct on attempt 1.
+C05,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C05,real,correct,38480,38480,Correct on attempt 1.
+C06,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C06,real,correct,0,0,Correct on attempt 1.
+C07,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C07,real,correct,13970,13970,Correct on attempt 1.
+C08,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C08,real,correct,605580,605580,Correct on attempt 1.
+C09,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C09,real,correct,487980,487980,Correct on attempt 1.
+C10,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C10,real,correct,558980,558980,Correct on attempt 1.
+C11,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C11,real,correct,446690,446690,Correct on attempt 1.
+C12,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C12,real,correct,1666490,1666490,Correct on attempt 1.
+C13,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C13,real,correct,107740,107740,Correct on attempt 1.
+C14,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C14,real,correct,0,0,Correct on attempt 1.
+C15,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C15,real,correct,168680,168680,Correct on attempt 1.
+C16,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C16,real,correct,376740,376740,Correct on attempt 1.
+C17,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C17,real,correct,258180,258180,Correct on attempt 1.
+C18,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C18,real,correct,62480,62480,Correct on attempt 1.
+C19,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C19,real,correct,1990,1990,Correct on attempt 1.
+C20,groq:openai/gpt-oss-120b,traces-td1.csv (source traces-A.csv),groq:openai/gpt-oss-120b:C20,real,correct,1106090,1106090,Correct on attempt 1.
+C01,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C01,real,correct,792800,792800,Correct on attempt 1.
+C02,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C02,real,incorrect,0,590320,"Breaks the completed-age convention: filters birth_date > '2025-09-25' AND <= '2026-09-25', i.e. customers aged 0, none exist so 0."
+C03,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C03,real,correct,936350,936350,Correct on attempt 1.
+C04,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C04,real,correct,2826250,2826250,Correct on attempt 1.
+C05,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C05,real,correct,38480,38480,Correct on attempt 1.
+C06,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C06,real,correct,0,0,Correct on attempt 1.
+C07,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C07,real,correct,13970,13970,Correct on attempt 1.
+C08,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C08,real,incorrect,388500,605580,"Breaks the completed-age convention: birth window [2001-09-24, 2002-09-24) is shifted by one year, so it counts customers aged 24 (C001, C003, C006, C014) and misses C004, C005, C007, C008, C009."
+C09,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C09,real,correct,487980,487980,Correct on attempt 1.
+C10,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C10,real,correct,558980,558980,Correct on attempt 1.
+C11,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C11,real,incorrect,322160,446690,"Breaks the completed-age convention: birth window (2001-12-01, 2006-12-01] spans five years (ages 20-24) instead of one year (2000-12-01, 2001-12-01]."
+C12,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C12,real,correct,1666490,1666490,Correct on attempt 1.
+C13,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C13,real,correct,107740,107740,Correct on attempt 1.
+C14,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C14,real,correct,0,0,Correct on attempt 1.
+C15,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C15,real,correct,168680,168680,Correct on attempt 1.
+C16,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C16,real,correct,376740,376740,Correct on attempt 1.
+C17,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C17,real,correct,258180,258180,Correct on attempt 1.
+C18,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C18,real,correct,62480,62480,Correct on attempt 1.
+C19,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C19,real,correct,1990,1990,Correct on attempt 1.
+C20,groq:openai/gpt-oss-20b,traces-td1.csv (source traces-B.csv),groq:openai/gpt-oss-20b:C20,real,correct,1106090,1106090,Correct on attempt 1.
+C01,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C01,real,correct,792800,792800,Correct on attempt 1.
+C02,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C02,real,sql_invalid,,590320,"Invalid SQL: alias 'AS age' written inside the WHERE expression, SQLite syntax error near ""AS""; logic also compares the birth year itself to 25."
+C03,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C03,real,correct,936350,936350,Correct on attempt 1.
+C04,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C04,real,correct,2826250,2826250,Correct on attempt 1.
+C05,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C05,real,correct,38480,38480,Correct on attempt 1.
+C06,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C06,real,correct,0,0,Correct on attempt 1.
+C07,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C07,real,correct,13970,13970,Correct on attempt 1.
+C08,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C08,real,incorrect,1418380,605580,"Breaks the completed-age convention: keeps birth year + 25 <= 2026 with birthday on or before 09-24, no upper bound, so customers aged 25 to 68 are counted (31 customers instead of 6)."
+C09,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C09,real,incorrect,0,487980,"Breaks the completed-age convention: compares the birth year (about 2000) minus an adjustment to 25 instead of the age; condition never true, so 0."
+C10,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C10,real,incorrect,0,558980,"Breaks the completed-age convention: compares birth year + adjustment to 25 without subtracting it from the order year; condition never true, so 0."
+C11,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C11,real,correct,446690,446690,Correct on attempt 1.
+C12,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C12,real,correct,1666490,1666490,Correct on attempt 1.
+C13,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C13,real,correct,107740,107740,Correct on attempt 1.
+C14,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C14,real,correct,0,0,Correct on attempt 1.
+C15,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C15,real,incorrect,314020,168680,"Breaks the completed-age convention: keeps everyone born less than 26 years before 2026-09-25 (ages 0-25), not exactly 25."
+C16,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C16,real,incorrect,0,376740,"Breaks the completed-age convention: inconsistent date arithmetic (date('2026-09-25', '-' || ...)) selects no customer, so 0."
+C17,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C17,real,incorrect,371990,258180,"Breaks the completed-age convention: birth_date > 2026-09-25 minus 26 years with no 25-year bound, so all customers under 26 are counted."
+C18,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C18,real,correct,62480,62480,Correct on attempt 1.
+C19,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C19,real,incorrect,71640,1990,"Breaks the completed-age convention: age bounds are derived from the customer's own year difference, so the filter is always true and all customers are counted."
+C20,openrouter:cohere/north-mini-code:free,traces-td1.csv (source traces-C.csv),openrouter:cohere/north-mini-code:free:C20,real,correct,1106090,1106090,Correct on attempt 1.
+C01,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C01,real,correct,792800,792800,Correct on attempt 1.
+C02,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C02,real,correct,590320,590320,Correct on attempt 1.
+C03,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C03,real,correct,936350,936350,Correct on attempt 1.
+C04,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C04,real,correct,2826250,2826250,Correct on attempt 1.
+C05,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C05,real,correct,38480,38480,Correct on attempt 1.
+C06,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C06,real,correct,0,0,Correct on attempt 1.
+C07,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C07,real,correct,13970,13970,Correct on attempt 1.
+C08,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C08,real,correct,605580,605580,Correct on attempt 1.
+C09,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C09,real,incorrect,0,487980,"Breaks the completed-age convention: computes age at the order date (o.date) instead of the reference date 2026-09-26, with a contradictory upper bound, so 0."
+C10,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C10,real,incorrect,119410,558980,"Breaks the completed-age convention: second branch uses year difference 24 with birthday not passed (age 23) instead of 26, so part of the 25-year-olds are missed."
+C11,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C11,real,correct,446690,446690,Correct on attempt 1.
+C12,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C12,real,correct,1666490,1666490,Correct on attempt 1.
+C13,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C13,real,correct,107740,107740,Correct on attempt 1.
+C14,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C14,real,correct,0,0,Correct on attempt 1.
+C15,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C15,real,incorrect,0,168680,"Breaks the completed-age convention: compares only month-day strings, mm-dd <= '09-25' AND mm-dd > '09-25' is contradictory, so 0."
+C16,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C16,real,correct,376740,376740,"Correct on attempt 2. Attempt 1 failed with HTTP 429 (Groq rate limit, access error, not a wrong answer); retried once, last attempt kept."
+C17,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C17,real,incorrect,248490,258180,"Breaks the completed-age convention at the birthday boundary: hard-coded years with strict '< 09-25' for 2001 drops C001 (born 2001-09-25, exactly 25) and '>= 09-25' for 2000 adds C004 (born 2000-09-25, already 26)."
+C18,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C18,real,correct,62480,62480,"Correct on attempt 2. Attempt 1 failed with HTTP 429 (Groq rate limit, access error, not a wrong answer); retried once, last attempt kept."
+C19,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C19,real,incorrect,83580,1990,"Breaks the completed-age convention: compares a 4-digit year string with '2026-09-25', which is almost always true, so the age filter is ineffective. Attempt 1 failed with HTTP 429 (Groq rate limit, access error, not a wrong answer); retried once, last attempt kept."
+C20,groq:qwen/qwen3.8-27b,traces-td1.csv (source traces-D.csv),groq:qwen/qwen3.8-27b:C20,real,correct,1106090,1106090,"Correct on attempt 2. Attempt 1 failed with HTTP 429 (Groq rate limit, access error, not a wrong answer); retried once, last attempt kept."
+C01,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C01,real,correct,792800,792800,Correct on attempt 1.
+C02,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C02,real,incorrect,135000,590320,"Breaks the completed-age convention: contradictory month-day conditions reduce to customers born exactly on 09-25 with year difference 25 (only C001), missing the 5 others."
+C03,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C03,real,correct,936350,936350,Correct on attempt 1.
+C04,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C04,real,correct,2826250,2826250,Correct on attempt 1.
+C05,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C05,real,correct,38480,38480,Correct on attempt 1.
+C06,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C06,real,correct,0,0,Correct on attempt 1.
+C07,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C07,real,correct,13970,13970,Correct on attempt 1.
+C08,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C08,real,incorrect,186340,605580,"Breaks the completed-age convention: requires year difference 25 and birthday passed, so customers born in 2000 after 09-24 who are still 25 (C004, C005, C007) are missed."
+C09,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C09,real,incorrect,0,487980,"Breaks the question scope: keeps only customers born exactly 2001-09-26 and adds an order-date filter on 2026-09-26 not in the question, so 0."
+C10,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C10,real,incorrect,0,558980,"Breaks the completed-age convention: order mm-dd >= birth mm-dd AND order mm-dd < birth mm-dd is contradictory, condition never true, so 0."
+C11,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C11,real,correct,446690,446690,Correct on attempt 1.
+C12,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C12,real,correct,1666490,1666490,Correct on attempt 1.
+C13,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C13,real,correct,107740,107740,Correct on attempt 1.
+C14,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C14,real,correct,0,0,Correct on attempt 1.
+C15,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C15,real,incorrect,138920,168680,"Breaks the completed-age convention: requires year difference 25 and birthday passed, missing customers born in 2000 after 09-25 who are still 25."
+C16,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C16,real,incorrect,1447730,376740,"Breaks the completed-age convention: keeps birth year + 25 < 2026 or birthday passed, no upper bound, so every customer aged 25 or more is counted."
+C17,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C17,real,incorrect,0,258180,"Breaks the completed-age convention: compares 'MMDD' concatenated without a dash with '09-25' and requires the birthday to be exactly 09-25, so no customer and 0."
+C18,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C18,real,incorrect,39580,62480,"Breaks the completed-age convention at order time: requires year difference 25 with birthday passed, missing customers with year difference 26 whose birthday is not yet passed."
+C19,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C19,real,correct,1990,1990,Correct on attempt 1.
+C20,openrouter:dots-studio/dots-3-note-preview:free,traces-td1.csv (source traces-E.csv),openrouter:dots-studio/dots-3-note-preview:free:C20,real,correct,1106090,1106090,Correct on attempt 1.
