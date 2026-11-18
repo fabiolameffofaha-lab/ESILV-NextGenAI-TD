@@ -6,9 +6,9 @@ and [`kit-td1/reference-td1.csv`](../kit-td1/reference-td1.csv). **No new networ
 
 | Pair | Step | Members |
 |---|---|---|
-| A | Step 1 - k-of-n vote, 2-of-3 vs 3-of-5 comparison | MaxouSpirou, Clmntphg |
-| B | Step 2 - wrong consensus, SQL diagnosis | _(to fill)_ |
-| C | Step 3 - routing rule, simulator | _(to fill)_ |
+| A | Step 1 - k-of-n vote, 2-of-3 vs 3-of-5 comparison | Maxence Collin, Clément Phung |
+| B | Step 2 - wrong consensus, SQL diagnosis | Titouan Ducourau, Raphael Kaufmann, Deborah Mosseri |
+| C | Step 3 - routing rule, simulator | Fabiola Meffo Faha, Thanh Son Potherat |
 
 ---
 
@@ -193,10 +193,110 @@ Reading:
 
 ## Step 2 - The wrong consensus (Pair B)
 
-_(Pair B to complete. Candidate from Step 1: **C09**, shared wrong value 0 from North, Qwen and
-Dots; reference 487980; wins both the 2-of-3 panel (North + Qwen) and the 3-of-5 quorum
-(North + Qwen + Dots). Second shared wrong value: **C10**, value 0 from North and Dots - outvoted:
-Dots is not in the 2-of-3 panel, and in 3-of-5 it only reaches a 2-2 tie.)_
+Detailed version (in French): [`td2-step2-pair-b.md`](td2-step2-pair-b.md). Script:
+[`kit-td1/pair_b_wrong_consensus.py`](../kit-td1/pair_b_wrong_consensus.py) (offline, opens
+`data/boutique.sqlite` read-only). Full output: [`evidence/td2-pair-b-output.txt`](evidence/td2-pair-b-output.txt).
+
+### 2.1. The case: C09 (real batch, not a supplied example)
+
+| Field | Value |
+|---|---|
+| Identifier | **C09** (F2, completed age at a date) |
+| Question | Revenue excl. VAT, in cents, of the customers aged exactly 25 on 2026-09-26 (all their orders) |
+| Source / nature | **Real**: our TD 1 traces of 21/10/2026 (`nature = real`, last attempt of each model) |
+| Shared wrong value | **0** |
+| Agreeing models | `cohere/north-mini-code:free` (OpenRouter), `qwen/qwen3.8-27b` (Groq), `dots-studio/dots-3-note-preview:free` (OpenRouter) |
+| Correct models | `openai/gpt-oss-120b`, `openai/gpt-oss-20b` (Groq): 487980 |
+| Reference | **487980** (`reference-td1.csv`, confirmed by an independent check, 2.4) |
+
+| Declared quorum | Votes | Decision | vs reference |
+|---|---|---|---|
+| Fixed panel of `atelier-vote.py` (120b, cohere, qwen), **k = 2 of 3** | 0: 2 (cohere, qwen); 487980: 1 (120b) | consensus 0 | **wrong** |
+| All five TD 1 models, **k = 3 of 5** | 0: 3 (cohere, qwen, dots); 487980: 2 (120b, 20b) | consensus 0 | **wrong** |
+
+The wrong value wins in both configurations. The only correct member of the fixed panel is
+outvoted, and moving to 3-of-5 does not help: Dots, outside the fixed panel, brings the third vote
+for 0.
+
+Second shared wrong value: **C10** (age at the order), 0 from cohere and dots (reference 558980).
+Here the vote abstains: max 1 vote in 2-of-3, a 2-2 tie in 3-of-5. The shared error does not win,
+but the panel does not return the right value either.
+
+### 2.2. SQL root cause: three different faults, one value
+
+The three queries were replayed as stored in `traces-td1.csv`: all return 0. Each sub-clause was then
+evaluated alone on the join orders x customers x product (397 rows):
+
+| Model | Faulty clause | Rows kept | Explanation |
+|---|---|---:|---|
+| cohere | `CAST(SUBSTR(c.birth_date,1,4) AS INTEGER) - CASE ... END = 25` | 0 | `2026 -` is missing: the expression is a **year of birth** (1958 to 2006), never 25. With `2026 -` added: 68 rows, 487980. |
+| qwen | `strftime('%m-%d', o.date) >= strftime('%m-%d', c.birth_date)` AND `strftime('%m-%d', o.date) < strftime('%m-%d', date(c.birth_date,'+26 years'))` | 0 (129 and 268 rows separately) | Adding 26 years does not change month-day, so the window is `md >= X AND md < X`: empty. It also uses the order date instead of the reference date 2026-09-26 (the logic of C10, not C09). |
+| dots | birth date = 2001-09-26 AND order placed on 2026-09-26 | 0 (6 rows for the birth condition alone) | An **equality on one day** instead of a one-year birth window, plus only orders placed on the reference day; there are none in the database. |
+
+**Key point:** there is no common bug. The three models fail for different reasons and land on the
+same value because **0 is what any over-restrictive filter returns** with `COALESCE(SUM(...), 0)`.
+A vote counts identical values, not identical reasoning, so on age questions every too-narrow filter
+"votes" for 0. Same mechanism in C10 and in the supplied case DEMO-SQL-C11 (2.5).
+
+### 2.3. Delta query: the rows behind the gap (0 vs 487980)
+
+```sql
+SELECT c.customer_id, c.birth_date,
+       COUNT(DISTINCT o.order_id)                     AS n_orders,
+       COALESCE(SUM(o.quantity_product * p.price), 0) AS revenue_cents
+FROM customers c
+LEFT JOIN orders  o ON o.customer_id = c.customer_id
+LEFT JOIN product p ON p.product_id  = o.product_id
+WHERE c.birth_date >  date('2026-09-26', '-26 years')   -- > 2000-09-26
+  AND c.birth_date <= date('2026-09-26', '-25 years')   -- <= 2001-09-26
+GROUP BY c.customer_id, c.birth_date
+ORDER BY c.birth_date;
+```
+
+| customer | birth_date | orders | revenue (cents) |
+|---|---|---:|---:|
+| C007 | 2000-11-30 | 6 | 118740 |
+| C009 | 2001-03-10 | 5 | 61330 |
+| C008 | 2001-05-15 | 7 | 99090 |
+| C002 | 2001-09-24 | 3 | 25920 |
+| C001 | 2001-09-25 | 8 | 135000 |
+| C003 | 2001-09-26 | 4 | 47900 |
+| **Total** | | 33 | **487980** = reference |
+
+The three faulty predicates keep 0 rows each, so the gap is exactly these six customers. Boundaries
+checked: C003 (born 2001-09-26) turns 25 **on** the reference day and is included; C005 (born
+2000-09-26) turns 26 that day and is excluded.
+
+### 2.4. Independent check
+
+1. **Recomputation without SQL or model**: a Python function reads `data/*.csv` and computes
+   `age = year(d) - year(b) - ((month, day)(d) < (month, day)(b))`. Result **487980**, equal to the
+   reference: the check depends neither on SQLite nor on an LLM.
+2. **Guard on the value 0**: on F2/F2b, a result of 0 must trigger a `COUNT(*)` of the target
+   population. If it is not empty (here 6 customers, 33 orders), the 0 is rejected. This deterministic
+   check would have blocked C09 and C10.
+3. **A different panel is not a guarantee**: 2-of-3 and 3-of-5 are both wrong on C09. A panel with
+   120b and 20b would have been right on this batch, but that is a choice made after seeing the
+   result. Consequence for Step 3: **no quorum alone on F2**; a deterministic check is required.
+
+### 2.5. Supplied cases (kept separate from our batch)
+
+- **DEMO-SQL-C11** (supplied historical real case, September 2026 pilot, **not** our batch), replayed
+  on `boutique.sqlite`: M1 `openai/gpt-oss-20b`, `WHERE c.birth_date = '2001-12-01'` returns 0 (no
+  customer born that day); M2 `cohere/north-mini-code:free`,
+  `'2026-12-01' >= c.birth_date AND '2027-12-01' <= c.birth_date` returns 0 (contradictory
+  conditions). Delta query on the window ]2000-12-01; 2001-12-01]: C009, C008, C002, C001, C003, C006,
+  sum **446690** = `reference-td1.csv` C11. In our own traces C11 is not a wrong consensus: only 20b
+  is wrong (322160) and both votes return 446690.
+- **DEMO-VOTE** (synthetic teaching example, not model output): one sale on 2026-01-01 for 100 cents.
+  `sale_date > '2026-01-01'` (two proposals) gives 0, `>=` gives 100. The 2-of-3 vote on [0, 0, 100]
+  keeps 0: wrong, because the included bound was treated as excluded.
+
+### 2.6. Hand count of the votes (check of Pair A's method)
+
+Counted by hand from the last attempt of each model, without Pair A's code: the 20 decisions match
+Pair A's table 1.3 on 20/20 questions (2-of-3: 15 correct, 1 wrong C09, 4 abstentions; 3-of-5: 14
+correct, 1 wrong C09, 5 abstentions).
 
 ## Step 3 - The routing rule (Pair C)
 
@@ -267,6 +367,82 @@ Note: in our adapted portfolio there is no subscription resource tested in TD 1 
 - Pair C: rates per family, rule, adapted `RESOURCES`/`choose`, before/after outputs, analysis of `choose`.
 - Limits: 20 questions, F2b = 1 cell; prices from `portefeuille-modeles-2026-09-28.csv` / `five-model-summary-en.csv` (OpenRouter list, 2026-10-21); the paid 120b cost is a fictional token envelope; availability is simulated.
 
+## Step 4 - What the three steps show together
+
+Full version: [`td2-step4.md`](td2-step4.md). The plenary comparison with the other sub-groups'
+rules was not done; this section keeps only our own synthesis.
+
+- **Step 1 locates the risk**: on F1 and F3 every model agrees with the reference; all
+  disagreements, abstentions and the wrong consensus are on questions with an age condition
+  (C02, C08-C11, C15-C19).
+- **Step 2 explains why a vote cannot remove it**: on C09 the errors of three models converge on 0,
+  so a larger quorum makes the wrong value stronger.
+- **Step 3 prices it**: F2 always gets a deterministic check, payouts never rely on a quorum alone.
+
+**Questions for which no free model is enough on its own.** All five models were used on free
+routes. On **10 of the 20 questions** (all those with an age condition) at least one free model is
+wrong, so a single unchecked call is acceptable only for an internal dashboard. On **4 questions
+(C09, C10, C15, C17)** no free quorum we tested returns the right value: the vote abstains in
+2-of-3 and in 3-of-5, or, on C09, elects the wrong 0 in both. gpt-oss-120b was correct on all 20, but
+that is one run on one batch, and a single model gives no signal when it is wrong. These four
+questions set the price of checking for TD 3: a deterministic check costs no tokens and is the only
+option that catches C09, while extra votes cost calls and quota.
+
 ## Cross-review, contributions, limits and next steps
 
-_(to complete after the 16:45 cross-review.)_
+### Internal cross-review
+
+Each step was re-run by another pair on a second member's machine (Windows 11, Python 3.14), with
+no network call:
+
+| Step | Re-run | Result |
+|---|---|---|
+| 1 | `atelier-vote.py`, `td2-compare-vote.py` | same 4 synthetic decisions; `td2-vote-decisions.jsonl` regenerated identical |
+| 1 | edge cases of `vote_k_sur_n` (value 0, all errors, error carrying a value, 2-2 tie, k = n, invalid k, duplicate) | contract respected in every case |
+| 1 / 2 | hand count of the 40 decisions by Pair B | 20/20 questions match |
+| 2 | `pair_b_wrong_consensus.py` | same output as the evidence file |
+| 3 | `atelier-routage-original.py`, `atelier-routage.py` | identical to `routage-before.jsonl` / `routage-after.jsonl`; the 25 rates per family recomputed from the traces match table 3.1 |
+
+Points raised and not yet corrected:
+
+1. **Step 3, rule vs code**: for customer figures on F2b and Combined, the rule (3.2) requires
+   "3-of-5 quorum + deterministic check", but `required_checks` in `atelier-routage.py` returns only
+   "3-of-5 quorum" (scenarios "combined customer figure" and "F2b customer, Groq 429"). The rule is the
+   one to keep: on C10, C15 and C17 the 3-of-5 quorum abstains.
+2. **Step 3, panel of the 2-of-3 dashboards on F2b and Combined**: with the fixed panel (120b,
+   cohere, qwen), all four 2-of-3 abstentions fall on these families (C10, C15, C17, C19). The panel
+   should be named, or the fallback after an abstention stated (deterministic check).
+3. **Step 3, quota**: the 50 free requests per day of cohere are not modelled in the simulator.
+4. **Step 1, for TD 3**: duplicates are detected on (provider, model); the same model reached through
+   two providers would count as two votes. It does not happen in our panels.
+5. **Repository**: three `__pycache__/*.pyc` files are committed and there is no `.gitignore`.
+
+### Contributions
+
+| Pair | Members | Contribution |
+|---|---|---|
+| A | Maxence Collin, Clément Phung | `vote_k_sur_n`, `td2-compare-vote.py`, 20-question table 2-of-3 vs 3-of-5 and analysis (Step 1) |
+| B | Titouan Ducourau, Raphael Kaufmann, Deborah Mosseri | wrong consensus C09 and C10, SQL diagnosis, delta query, independent check, hand count of the votes, `pair_b_wrong_consensus.py` (Step 2); cross-review and Step 4 synthesis |
+| C | Fabiola Meffo Faha, Thanh Son Potherat | rates per family, routing rule, adapted simulator, before/after outputs, analysis of `choose` (Step 3) |
+
+### Prompts
+
+No prompt was changed since TD 1: TD 2 made no provider call and works only on the stored TD 1 traces.
+
+### Limits
+
+- Twenty questions and one batch: every rate, wrong consensus and abstention is a batch-specific
+  observation, not a general error rate or a ranking.
+- Merged traces from five members' accounts; qwen's values on C16-C20 come from a second attempt
+  after an HTTP 429.
+- Small families: F2b has one question, Combined five.
+- Simulator availability and the paid-route cost are synthetic.
+- A vote compares values, not queries: two different wrong queries giving the same value cannot be
+  told apart by the vote.
+
+### Next steps (TD 3)
+
+- Correct points 1 to 3 of the cross-review in the routing rule and the simulator.
+- Price the configurations on the four questions where no free quorum is enough (C09, C10, C15, C17):
+  deterministic check vs paid route vs review.
+- Add the zero-result guard (`COUNT(*)` of the target population) to the age families.
