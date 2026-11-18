@@ -6,7 +6,7 @@ and [`kit-td1/reference-td1.csv`](../kit-td1/reference-td1.csv). **No new networ
 
 | Pair | Step | Members |
 |---|---|---|
-| A | Step 1 - k-of-n vote, 2-of-3 vs 3-of-5 comparison | MaxouSpirou, _(partner)_ |
+| A | Step 1 - k-of-n vote, 2-of-3 vs 3-of-5 comparison | MaxouSpirou, Clmntphg |
 | B | Step 2 - wrong consensus, SQL diagnosis | _(to fill)_ |
 | C | Step 3 - routing rule, simulator | _(to fill)_ |
 
