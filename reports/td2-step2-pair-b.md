@@ -1,11 +1,5 @@
 # TD 2 – Étape 2 (Paire B) : le faux consensus
 
-*Section destinée à `reports/td2.md`. TD 2 du 18/11/2026, pack 2026-11-18-students-5.
-Tout est hors ligne : aucun appel fournisseur, uniquement `traces-td1.csv`, `reference-td1.csv` et `data/boutique.sqlite` (ouverte en lecture seule).*
-
-- Script : [`kit-td1/pair_b_wrong_consensus.py`](../kit-td1/pair_b_wrong_consensus.py) (`python pair_b_wrong_consensus.py`)
-- Sortie complète : [`reports/evidence/td2-pair-b-output.txt`](evidence/td2-pair-b-output.txt)
-
 ## 1. Le cas retenu : C09 (vrai batch du TD 1, pas un exemple fourni)
 
 | Champ | Valeur |
@@ -64,7 +58,7 @@ ORDER BY c.birth_date;
 | C002 | 2001-09-24 | 3 | 25920 |
 | C001 | 2001-09-25 | 8 | 135000 |
 | C003 | 2001-09-26 | 4 | 47900 |
-| **Total** | | | **487980** = référence ✅ |
+| **Total** | | | **487980** = référence |
 
 Les trois prédicats fautifs gardent 0 ligne chacun, donc l'écart correspond exactement à ces six clients. Cas limites vérifiés : C003 (né le 2001-09-26) a 25 ans **le jour même**, il est donc inclus. C005 (né le 2000-09-26) a **26 ans** ce jour-là, il est donc exclu. Ce sont ces bornes qui séparent C09 de C08 et de C16.
 
@@ -79,7 +73,7 @@ Les trois prédicats fautifs gardent 0 ligne chacun, donc l'écart correspond ex
 **DEMO-SQL-C11** (cas historique réel, pilote de septembre 2026, ce n'est **pas** notre batch). Rejoué sur `boutique.sqlite` :
 - M1 `openai/gpt-oss-20b` : `WHERE c.birth_date = '2001-12-01'` → **0**. Une égalité sur un seul jour : aucun client n'est né ce jour-là.
 - M2 `cohere/north-mini-code:free` : `'2026-12-01' >= c.birth_date AND '2027-12-01' <= c.birth_date` → **0**. Les deux conditions sont contradictoires (0 client).
-- Requête delta (fenêtre `]2000-12-01 ; 2001-12-01]`) : C009, C008, C002, C001, C003, C006 → somme **446690** = `reference-td1.csv` C11 ✅.
+- Requête delta (fenêtre `]2000-12-01 ; 2001-12-01]`) : C009, C008, C002, C001, C003, C006 → somme **446690** = `reference-td1.csv` C11.
 - Dans nos propres traces, C11 n'est **pas** un faux consensus : seul 20b se trompe (322160), et les deux votes donnent 446690.
 
 **DEMO-VOTE** (exemple synthétique, ce ne sont pas des sorties de modèle) : une vente le 2026-01-01 de 100 centimes. Avec `sale_date > '2026-01-01'` (deux propositions) on obtient 0, avec `>=` on obtient 100. Le vote 2 sur 3 sur `[0, 0, 100]` retient 0 : c'est faux, parce que la borne incluse a été traitée comme exclue.
@@ -91,16 +85,16 @@ Dernière tentative de chaque modèle. Un `sql_invalid` (cohere C02) reste dans 
 | Q | 2 sur 3 (panel fixe) | 3 sur 5 |
 |---|---|---|
 | C01, C03–C07, C12–C14, C20 | consensus correct | consensus correct |
-| C02 | 590320 (2) ✅ | abstention (2) : 20b et dots divergent, cohere est invalide |
-| C08 | 605580 (2) ✅ | abstention (2) |
-| **C09** | **0 (2) ❌** | **0 (3) ❌** |
+| C02 | 590320 (2)  | abstention (2) : 20b et dots divergent, cohere est invalide |
+| C08 | 605580 (2)  | abstention (2) |
+| **C09** | **0 (2) ** | **0 (3) ** |
 | C10 | abstention (1) | abstention (2 contre 2) |
-| C11 | 446690 (3) ✅ | 446690 (4) ✅ |
+| C11 | 446690 (3)  | 446690 (4)  |
 | C15 | abstention (1) | abstention (2) |
-| C16 | 376740 (2) ✅ | 376740 (3) ✅ |
+| C16 | 376740 (2)  | 376740 (3)  |
 | C17 | abstention (1) | abstention (2) |
-| C18 | 62480 (3) ✅ | 62480 (4) ✅ |
-| C19 | abstention (1) | 1990 (3) ✅ : 20b et dots font passer l'abstention à un consensus |
+| C18 | 62480 (3)  | 62480 (4)  |
+| C19 | abstention (1) | 1990 (3)  : 20b et dots font passer l'abstention à un consensus |
 
 Bilan : **2 sur 3 → 15 consensus justes, 1 faux (C09), 4 abstentions (C10, C15, C17, C19). 3 sur 5 → 14 justes, 1 faux (C09), 5 abstentions (C02, C08, C10, C15, C17)**. Passer à 3 sur 5 fait perdre C02 et C08 (ils passent en abstention), fait gagner C19, et ne corrige pas C09. **À comparer ligne par ligne avec la sortie de `vote_k_sur_n` de la Paire A.**
 
