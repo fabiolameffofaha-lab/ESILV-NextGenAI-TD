@@ -1,0 +1,106 @@
+
+==============================================================================
+1. Hand count of the votes, last attempt per model (traces-td1.csv)
+==============================================================================
+case       ref |     120b      20b   cohere     qwen     dots | 2-of-3 fixed panel     | 3-of-5
+C01     792800 |   792800   792800   792800   792800   792800 | 792800 (3) OK          | 792800 (5) OK
+C02     590320 |   590320        0 sql_inva   590320   135000 | 590320 (2) OK          | abstain (2)
+C03     936350 |   936350   936350   936350   936350   936350 | 936350 (3) OK          | 936350 (5) OK
+C04    2826250 |  2826250  2826250  2826250  2826250  2826250 | 2826250 (3) OK         | 2826250 (5) OK
+C05      38480 |    38480    38480    38480    38480    38480 | 38480 (3) OK           | 38480 (5) OK
+C06          0 |        0        0        0        0        0 | 0 (3) OK               | 0 (5) OK
+C07      13970 |    13970    13970    13970    13970    13970 | 13970 (3) OK           | 13970 (5) OK
+C08     605580 |   605580   388500  1418380   605580   186340 | 605580 (2) OK          | abstain (2)
+C09     487980 |   487980   487980        0        0        0 | 0 (2) WRONG            | 0 (3) WRONG
+C10     558980 |   558980   558980        0   119410        0 | abstain (1)            | abstain (2)
+C11     446690 |   446690   322160   446690   446690   446690 | 446690 (3) OK          | 446690 (4) OK
+C12    1666490 |  1666490  1666490  1666490  1666490  1666490 | 1666490 (3) OK         | 1666490 (5) OK
+C13     107740 |   107740   107740   107740   107740   107740 | 107740 (3) OK          | 107740 (5) OK
+C14          0 |        0        0        0        0        0 | 0 (3) OK               | 0 (5) OK
+C15     168680 |   168680   168680   314020        0   138920 | abstain (1)            | abstain (2)
+C16     376740 |   376740   376740        0   376740  1447730 | 376740 (2) OK          | 376740 (3) OK
+C17     258180 |   258180   258180   371990   248490        0 | abstain (1)            | abstain (2)
+C18      62480 |    62480    62480    62480    62480    39580 | 62480 (3) OK           | 62480 (4) OK
+C19       1990 |     1990     1990    71640    83580     1990 | abstain (1)            | 1990 (3) OK
+C20    1106090 |  1106090  1106090  1106090  1106090  1106090 | 1106090 (3) OK         | 1106090 (5) OK
+
+==============================================================================
+Shared wrong values (verdict = incorrect, identical value, >= 2 models)
+==============================================================================
+C09: value 0 returned by ['cohere', 'qwen', 'dots'] (reference 487980)
+C10: value 0 returned by ['cohere', 'dots'] (reference 558980)
+
+==============================================================================
+2. C09 - wrong consensus on 0: replay on data/boutique.sqlite
+==============================================================================
+Reference query (reference-td1.csv logic)        -> 487980
+cohere  SQL from traces (replayed)                 -> 0
+qwen    SQL from traces (replayed)                 -> 0
+dots    SQL from traces (replayed)                 -> 0
+120b    SQL from traces (replayed)                 -> 487980
+20b     SQL from traces (replayed)                 -> 487980
+
+==============================================================================
+3. C09 - isolate the faulty clause (rows of orders x customers kept)
+==============================================================================
+rows before any filter: 397
+-- cohere
+   birth_year - adj = 25 (no '2026 -')        rows=   0  revenue=0
+   same, with 2026 - (fixed)                  rows=  68  revenue=487980
+-- qwen
+   year(o.date) - year(birth) = 25            rows=  72  revenue=548920
+   md(o.date) >= md(birth)                    rows= 129  revenue=907310
+   md(o.date) < md(birth + 26 years)          rows= 268  revenue=1918940
+   clauses 2 AND 3 together                   rows=   0  revenue=0
+-- dots
+   birth_date = 2001-09-26 (single day)       rows=   6  revenue=47900
+   order placed on 2026-09-26                 rows=   0  revenue=0
+   both together                              rows=   0  revenue=0
+-- cohere: values taken by its 'age' expression
+   min=1958 max=2006  (a year of birth, never 25)
+-- dots: customers born 2001-09-26 and their orders on 2026-09-26
+   [('C003', '2001-09-26')] [(0,)]
+
+==============================================================================
+4. C09 - delta query: the rows behind the gap 0 vs reference
+==============================================================================
+customer  birth_date  orders   revenue
+C007      2000-11-30       6    118740
+C009      2001-03-10       5     61330
+C008      2001-05-15       7     99090
+C002      2001-09-24       3     25920
+C001      2001-09-25       8    135000
+C003      2001-09-26       4     47900
+sum = 487980  | reference = 487980  | match = True
+Rows kept by cohere / qwen / dots predicates: 0 / 0 / 0 -> whole delta = reference.
+-- boundary check (born around 2000-09-26 / 2001-09-26):
+   ('C004', '2000-09-25')
+   ('C005', '2000-09-26')
+   ('C002', '2001-09-24')
+   ('C001', '2001-09-25')
+   ('C003', '2001-09-26')
+
+==============================================================================
+5. Independent check (Python on data/*.csv, no SQL)
+==============================================================================
+C09 recomputed from CSV = 487980 | SQL reference = 487980 | match = True
+
+==============================================================================
+6. DEMO-SQL-C11 (supplied historical case, Sept. 2026 pilot - NOT our batch)
+==============================================================================
+M1 gpt-oss-20b  (birth_date = '2001-12-01')       -> 0
+M2 cohere       (birth <= 2026-12-01 AND >= 2027-12-01) -> 0
+   customers matching M2 window: 0
+   ('C009', '2001-03-10', 61330)
+   ('C008', '2001-05-15', 99090)
+   ('C002', '2001-09-24', 25920)
+   ('C001', '2001-09-25', 135000)
+   ('C003', '2001-09-26', 47900)
+   ('C006', '2001-11-30', 77450)
+delta sum = 446690 | reference-td1.csv C11 = 446690
+
+==============================================================================
+7. DEMO-VOTE (synthetic teaching example, not model output)
+==============================================================================
+'>' variant (x2) -> 0 ; '>=' variant (x1) -> 100 ; reference 100
+2-of-3 vote on [0, 0, 100] -> consensus 0 (WRONG): the shared '>' drops the boundary day.
